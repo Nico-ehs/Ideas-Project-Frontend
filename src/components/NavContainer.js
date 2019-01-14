@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Navbar from 'react-bootstrap/lib/Navbar'
+import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import Nav from 'react-bootstrap/lib/Nav'
 import {Link} from 'react-router-dom'
 
@@ -9,18 +10,39 @@ import {Link} from 'react-router-dom'
 
 
 class NavContainer extends Component {
+  componentDidMount() {
+  }
+
+  genCategoriesDropdown = () => {
+    if (!this.props.categories) {
+      return null
+    }
+    // console.log(this.props.categories.length)
+     return this.props.categories.map(category =>
+       <div key={category.id} >
+       <NavDropdown.Item href={"../categories/"+category.id} >{category.title}</NavDropdown.Item>
+       </div>
+     )
+  }
 
   render() {
-
+    // console.log("nav")
+    // console.log(this.props)
     return (
       <div>
       <Navbar bg="light" expand="lg">
       <Navbar.Brand><Link to="/">Ideas</Link></Navbar.Brand>
       <Nav className="mr-auto">
-      {this.props.user ? <Link to="/userdata">User Page</Link> : null }
+      <NavDropdown title="Categories" id="collasible-nav-dropdown">
+        {this.genCategoriesDropdown()}
+
+      </NavDropdown>
       </Nav>
       <Nav className="mr-auto">
-      {this.props.user ? <Link to="/userdata">New Question</Link> : null}
+      {this.props.user ? <Link to="/userpage">User Page</Link> : null }
+      </Nav>
+      <Nav className="mr-auto">
+      {this.props.user ? <Link to="/newidea">New Idea</Link> : null}
       </Nav>
 
 

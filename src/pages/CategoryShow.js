@@ -1,11 +1,10 @@
-
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/lib/Table'
 import {Link} from 'react-router-dom'
 const BackendUrl = "http://localhost:3000/"
 
 
-class Home extends Component {
+class CategoryShow extends Component {
 
   state={
     date: null
@@ -16,13 +15,13 @@ class Home extends Component {
   }
 
   genIdeas = () => {
-    // console.log(this.state)
+    console.log(this.state)
     if (!this.state.data){
       return null
     }
     // console.log(this.state.data)
     return this.state.data.map(idea =>
-      <tr key={idea.id} >
+      <tr>
         <td><Link to={"/ideas/"+idea.id}>{idea.title}</Link></td>
         <td>{idea.description}</td>
         <td>{idea.comments.length}</td>
@@ -31,7 +30,8 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    fetch(BackendUrl+"/ideas")
+    console.log(this.props)
+    fetch(BackendUrl+"/categories/"+this.state.data.id)
       .then(response => response.json())
       .then((res) => this.setState({ data: res }))
   }
@@ -57,4 +57,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default CategoryShow;

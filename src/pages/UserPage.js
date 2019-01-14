@@ -58,14 +58,14 @@ class UserPage extends Component {
 
   updateQ = (event, id) => {
     console.log("update")
-     patchBackendData(`/questions/${id}`,
-       JSON.stringify({"question": {text: (event.target.parentElement.children[0].value)}}),
+     patchBackendData(`/ideas/${id}`,
+       JSON.stringify({"idea": {text: (event.target.parentElement.children[0].value)}}),
       this.props.reload)
   }
 
   deleteQ = (event) => {
     console.log("delete")
-    deleteBackendData(`/questions/${event.target.parentElement.id}`,this.props.reload)
+    deleteBackendData(`/ideas/${event.target.parentElement.id}`,this.props.reload)
   }
 
   updateA = (event) => {
@@ -84,16 +84,16 @@ class UserPage extends Component {
 
 
   genUserIdeas  = () => {
-    return this.props.user.questions.map(question =>
+    return this.props.user.ideas.map(idea =>
       <div>
-      <h4>{question.text}</h4>
-      {(this.state.toEditQ === question.id)?
-        <Form inline id={question.id} >
-        <FormControl type="text" defaultValue={question.text} />
-        <Button onClick={(event)=> this.updateQ(event, question.id)} >Update</Button>
+      <h4>{idea.text}</h4>
+      {(this.state.toEditQ === idea.id)?
+        <Form inline id={idea.id} >
+        <FormControl type="text" defaultValue={idea.text} />
+        <Button onClick={(event)=> this.updateQ(event, idea.id)} >Update</Button>
         <Button onClick={this.closeEditQ} >Close</Button>
       </Form> :
-      <div id={question.id} >
+      <div id={idea.id} >
        <Button onClick={this.openEditQ} >Edit</Button>
        <Button onClick={this.deleteQ} >Delete</Button>
        </div>}
@@ -104,7 +104,7 @@ class UserPage extends Component {
     return this.props.user.comments.map(comment =>
       <div>
       <h4>{comment.text}</h4>
-      <p>For Idea {comment.question_id}</p>
+      <p>For Idea {comment.idea_id}</p>
       {(this.state.toEditA === comment.id)?
       <Form inline id={comment.id} >
         <FormControl type="text" defaultValue={comment.text} />

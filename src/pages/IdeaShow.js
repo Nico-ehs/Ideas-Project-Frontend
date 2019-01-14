@@ -3,6 +3,9 @@ import Form from 'react-bootstrap/lib/Form'
 // import FormControl from 'react-bootstrap/lib/FormControl'
 import Button from 'react-bootstrap/lib/Button'
 import Card from 'react-bootstrap/lib/Card'
+import {Link} from 'react-router-dom'
+// import NewComment from '../components/NewComment';
+
 
 const BackendUrl = "http://localhost:3000/"
 
@@ -26,7 +29,7 @@ class IdeaShow extends React.Component {
   }
 
   componentDidMount() {
-    console.log("show")
+    // console.log(this.state)
     fetch(BackendUrl+"/ideas/"+this.props.id)
       .then(response => response.json())
       .then((res) => this.setState({ ideaData: res }))
@@ -37,15 +40,22 @@ class IdeaShow extends React.Component {
   }
 
   genComments = () => {
-    console.log(this.state)
+    // console.log(this.state)
     if(!this.state.ideaData.comments){
       return null
     }
     return this.state.ideaData.comments.map(comment =>
-      <div key={comment.id}>
-      <h4>{comment.text}</h4>
-      <p>By User{comment.user_id}</p>
-    </div>)
+      <Card key={comment.id}>
+      <Card.Body>
+      <Card.Title><p className="float-left">
+      <Link to={"/users/"+comment.user_id}>{comment.user_id}</Link> at time
+      </p></Card.Title>
+        <Card.Text>
+            {comment.text}
+        </Card.Text>
+      </Card.Body>
+</Card>
+      )
   }
 
   postComment= () => {
@@ -67,7 +77,6 @@ class IdeaShow extends React.Component {
           <Form.Label>New Comment</Form.Label>
           <Form.Control placeholder="Enter Comment" name="comment" onChange={this.handleChange} />
         </Form.Group>
-
         <Button variant="primary" onClick={this.postComment}>
           Submit
         </Button>
@@ -76,18 +85,21 @@ class IdeaShow extends React.Component {
   }
 
   render(){
-  console.log(this.state)
+  // console.log(this.state)
   if(!this.state.ideaData){
     return null
   }
+  const Idea = this.state.ideaData
   return (
     <div>
       <Card>
       <Card.Body>
-        <Card.Title>{this.state.ideaData.text}</Card.Title>
-          {this.genComments()}
-          {this.props.user ? this.genCommentForm() : null}
+        <Card.Title><h1>{this.state.ideaData.title}</h1></Card.Title>
+          <p>Catagory: <Link to={"/category/"+Idea.category_id}>{Idea.category_id}</Link></p>
+          <p>Idea Description: {this.state.ideaData.description}</p>
       </Card.Body>
+      {this.genComments()}
+      {this.props.user ? this.genCommentForm() : null}
       </Card>
     </div>
    )
