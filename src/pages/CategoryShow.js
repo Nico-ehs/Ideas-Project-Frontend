@@ -7,7 +7,7 @@ const BackendUrl = "http://localhost:3000/"
 class CategoryShow extends Component {
 
   state={
-    date: null
+    data: null
   }
 
   genIdeaEntry = () => {
@@ -20,8 +20,8 @@ class CategoryShow extends Component {
       return null
     }
     // console.log(this.state.data)
-    return this.state.data.map(idea =>
-      <tr>
+    return this.state.data.ideas.map(idea =>
+      <tr key={idea.id}>
         <td><Link to={"/ideas/"+idea.id}>{idea.title}</Link></td>
         <td>{idea.description}</td>
         <td>{idea.comments.length}</td>
@@ -31,15 +31,18 @@ class CategoryShow extends Component {
 
   componentDidMount() {
     console.log(this.props)
-    fetch(BackendUrl+"/categories/"+this.state.data.id)
+    fetch(BackendUrl+"/categories/"+this.props.id)
       .then(response => response.json())
       .then((res) => this.setState({ data: res }))
   }
 
   render() {
-
+    if (!this.state.data){
+      return null
+    }
     return (
       <div>
+      <h1>{this.state.data.title}</h1>
         <Table striped bordered hover>
         <thead>
           <tr>

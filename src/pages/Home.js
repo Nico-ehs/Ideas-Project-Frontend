@@ -8,7 +8,7 @@ const BackendUrl = "http://localhost:3000/"
 class Home extends Component {
 
   state={
-    date: null
+    data: null
   }
 
   genIdeaEntry = () => {
@@ -25,6 +25,7 @@ class Home extends Component {
       <tr key={idea.id} >
         <td><Link to={"/ideas/"+idea.id}>{idea.title}</Link></td>
         <td>{idea.description}</td>
+        <td><Link to={"/categories/"+idea.category_id}>{idea.category_title}</Link></td>
         <td>{idea.comments.length}</td>
       </tr>
       )
@@ -45,6 +46,7 @@ class Home extends Component {
           <tr>
             <th>Title</th>
             <th>Description</th>
+            <th>Category</th>
             <th>comments</th>
           </tr>
         </thead>
