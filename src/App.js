@@ -6,6 +6,7 @@ import IdeaShow from './pages/IdeaShow';
 import CategoryShow from './pages/CategoryShow'
 import UserPage from './pages/UserPage';
 import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 import NewIdea from './pages/NewIdea';
 
 
@@ -14,16 +15,16 @@ import './App.css';
 
 const BackendUrl = "http://localhost:3000/"
 
-function postBackendData(route, data, confirmFn){
-    return fetch(BackendUrl+route,{
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-        },
-        body: data
-    }).then(res => res.json()).then(json => confirmFn(json));
-}
+// function postBackendData(route, data, confirmFn){
+//     return fetch(BackendUrl+route,{
+//         method: "POST",
+//         headers: {
+//         "Content-Type": "application/json",
+//         Accept: "application/json"
+//         },
+//         body: data
+//     }).then(res => res.json()).then(json => confirmFn(json));
+// }
 
 
 class App extends Component {
@@ -38,19 +39,67 @@ class App extends Component {
     fetch(BackendUrl+"/categories")
       .then(response => response.json())
       .then(this.setCategories)
+    let token = localStorage.getItem('token')
+    if(token){
+      this.setState({token})
+      fetch(BackendUrl+`tokenauth`, {
+        method: "GET",
+        headers: {
+          "Authentication" : `Bearer ${token}`
+        }
+      }).then(res => res.json()).then(this.setUser)
+    }
   }
+
+  setUser = (data) => {
+    // debugger
+    if(data.user){
+      this.setState({user: data.user})
+    }
+  }
+
+
   setCategories = (data) => {
     this.setState({categories: data})
   }
 
   reloadUser = () => {
-    postBackendData("users", JSON.stringify({"user": {"name":this.state.user.name}}), this.setUser)
+    fetch(BackendUrl+`user/${this.user.id}`)
+      .then(response => response.json())
+      .then(this.setCategories)
   }
 
-  setUser = (user) => {
-    this.setState({user: user})
-  }
 
+
+  loginFn = (login) => {
+    // debugger
+    fetch(`http://localhost:3000/auth`, {
+      method:"POST",
+      headers: {
+        "Content-type":"application/json",
+        "Accept":"application/json"
+      },
+      body: JSON.stringify({
+        name: login.name,
+        password: login.password
+      })
+    }).then(res => res.json())
+    .then(data => {
+      if(data.error){
+        alert('Incorrect username or password')
+      }else{
+        console.log(data)
+        // debugger
+        this.setState({user: data.user_info})
+        localStorage.setItem('token', data.token)
+      }
+    })
+  };
+
+  logout = () => {
+    localStorage.clear()
+    this.setState({user:null})
+  }
 
   render() {
 
@@ -69,14 +118,18 @@ class App extends Component {
       <div className="App">
       <Router>
         <React.Fragment>
-          <NavContainer user={this.state.user} setUser={this.setUser} categories={this.state.categories} />
+          <NavContainer user={this.state.user} logout={this.logout} categories={this.state.categories} />
           <Route exact path="/" render={() => <Home user={this.state.user} />}/>
           <Route exact path="/home" render={() => <Home user={this.state.user} />} />
           <Route exact path="/newidea" render={() => <NewIdea user={this.state.user} categories={this.state.categories} />} />
           <Route exact path="/login" render={() => this.state.user ?
               <Redirect to="/home" /> :
-              <Login setUser={this.setUser} /> }
+              <Login loginFn={this.loginFn} /> }
             />
+            <Route exact path="/signup" render={() => this.state.user ?
+                <Redirect to="/home" /> :
+                <SignUp loginFn={this.loginFn} /> }
+              />
           <Route exact path="/userpage" render={() => <UserPage user={this.state.user} reload={this.reloadUser} />} />
           <Route path="/ideas/:id" component={Idea} />
           <Route path="/categories/:id" component={Category} />

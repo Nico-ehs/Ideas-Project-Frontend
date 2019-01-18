@@ -47,8 +47,9 @@ class NavContainer extends Component {
 
 
       {this.props.user ? <div><p>Welcome {this.props.user.name}</p>
-      <p onClick={() => this.props.setUser(null)} >Logout</p></div> :
-      <Link to="/login">Login</Link>}
+      <p onClick={this.props.logout} >Logout</p></div> :
+      <div><p><Link to="/login">Login</Link></p>
+      <p><Link to="/signup">Signup</Link></p></div>}
       </Navbar>
       </div>
     );

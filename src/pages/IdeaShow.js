@@ -163,10 +163,11 @@ class IdeaShow extends React.Component {
   }
 
   genCommentEditForm = () => {
+    // let commentData=this.state.ideaData.comments.find((c) => c.id===this.state.commentEdit)
     return (<div>
       <Form  >
         <Form.Group controlId="name">
-          <Form.Label><p> </p>Edit Comment</Form.Label>
+          <Form.Label><p> </p>Edit Comment<p>Comment Text:</p></Form.Label>
           <Form.Control placeholder="Enter Comment" name="comment" onChange={this.handleChange} />
         </Form.Group>
         <Button variant="primary" onClick={() => this.setCommentEdit()}>
