@@ -1,10 +1,8 @@
 import React from 'react';
 import Form from 'react-bootstrap/lib/Form'
-// import FormControl from 'react-bootstrap/lib/FormControl'
 import Button from 'react-bootstrap/lib/Button'
 import Card from 'react-bootstrap/lib/Card'
 import {Link} from 'react-router-dom'
-// import NewComment from '../components/NewComment'
 
 const BackendUrl = "http://localhost:3000/"
 
@@ -30,7 +28,6 @@ function patchBackendData(route, data, confirmFn){
     }).then(res => res.json()).then(json => confirmFn(json));
 }
 
-
 function deleteBackendData(route, confirmFn){
     return fetch(BackendUrl+route,{
         method: "DELETE",
@@ -41,28 +38,29 @@ function deleteBackendData(route, confirmFn){
     }).then(res => res.json()).then(json => confirmFn(json));
 }
 
-
-
 class IdeaShow extends React.Component {
+
+  categorySelect = () =>{
+    if (!this.props.categories){
+      return null
+    }
+    return this.props.categories.map(category =>
+       <option key={category.id}>{category.title}</option>
+    )
+  }
 
   state = {
     ideaData: null,
-    newComment: "",
     textInput: "",
     commentEdit: null,
-    editText:""
+    ideaEdit: null
   }
-
 
   handleChange = (e) => {
     let change = {}
     change[e.target.id] = e.target.value
     this.setState(change)
-    // this.setState({ name: e.target.value });
-    console.log(this.state)
   };
-
-
 
   componentDidMount() {
     // console.log(this.state)
@@ -71,39 +69,54 @@ class IdeaShow extends React.Component {
       .then((res) => this.setState({ ideaData: res }))
   }
 
+  reload2 = () => {
+    fetch(BackendUrl+"/ideas/"+this.props.id)
+      .then(response => response.json())
+      .then((res) => this.setState({ ideaData: res }))
+  }
+
   setCommentEdit = (id) => {
-    console.log(id)
+    // console.log(id)
+    this.setState({ ideaEdit: null })
     this.setState({ commentEdit: id })
   }
 
+  setIdeaEdit = (id) => {
+    // console.log(id)
+    this.setState({ ideaEdit: id })
+    this.setState({ commentEdit: null })
+  }
+
   postComment= () => {
-    // console.log({"comment": {"user_id":this.props.user.id,
-    //  "text": this.state.newComment,
-    //   "idea_id": this.state.ideaData.id }})
     postBackendData("comments",
     JSON.stringify({"comment": {"user_id":this.props.user.id,
      "text": this.state.textInput,
-      "idea_id": this.state.ideaData.id }}), this.props.reload)
+      "idea_id": this.state.ideaData.id }}), this.reload2)
 
   }
 
   deleteComment = () => {
     console.log("delete")
-    debugger
-    deleteBackendData(`comments/${this.state.commentEdit}`, this.props.reload)
+    // debugger
+    deleteBackendData(`comments/${this.state.commentEdit}`, this.reload2)
   }
 
   patchComment = () => {
     console.log("patch")
-    debugger
+    // debugger
     patchBackendData(`comments/${this.state.commentEdit}`,
     JSON.stringify({"comment": {"user_id":this.props.user.id,
-     "text": this.state.newComment,
-      "idea_id": this.state.ideaData.id }}), this.props.reload)
+     "text": this.state.textInput,
+      "idea_id": this.state.ideaData.id }}), this.reload2)
   }
 
-
-
+  patchIdea = () => {
+    // console.log("patch")
+    // debugger
+    patchBackendData(`ideas/${this.state.ideaEdit}`,
+    JSON.stringify({"idea": {"user_id":this.props.user.id,
+     "description": this.state.textInput}}), this.reload2)
+  }
 
   genComments = () => {
     // console.log(this.state)
@@ -116,14 +129,13 @@ class IdeaShow extends React.Component {
       )
   }
 
-
   genComment = (comment) => {
     if (this.props.user && this.props.user.id === comment.user_id){
       return (<Card key={comment.id}>
       <Card.Body>
-      <Card.Title><p className="float-left">
-      <Link to={"/users/"+comment.user_id}>{comment.user_id}</Link> at time
-      </p></Card.Title>
+      <Card.Title className="float-left">
+      <Link to={"/users/"+comment.user_id}>{comment.author_name}</Link> said:
+      </Card.Title>
         <Card.Text>
             {comment.text}
         </Card.Text>
@@ -135,11 +147,11 @@ class IdeaShow extends React.Component {
     }
     return (<Card key={comment.id}>
     <Card.Body>
-    <Card.Title><p className="float-left">
-    <Link to={"/users/"+comment.user_id}>{comment.author_name}</Link> said
-    </p></Card.Title>
+    <Card.Title className="float-left">
+    <Link to={"/users/"+comment.user_id}>{comment.author_name}</Link> said:
+    </Card.Title>
       <Card.Text>
-          {comment.text}
+        {comment.text}
       </Card.Text>
     </Card.Body>
     </Card>)
@@ -148,29 +160,26 @@ class IdeaShow extends React.Component {
   genNewCommentForm = () => {
     return (<div>
       <Form  >
-        <Form.Group controlId="newComment">
+        <Form.Group controlId="textInput">
           <Form.Label><p> </p>New Comment</Form.Label>
           <Form.Control placeholder="Enter Comment" name="comment" onChange={this.handleChange} />
         </Form.Group>
         <Button variant="primary" onClick={this.postComment}>
           Submit
         </Button>
-        <Button variant="primary" onClick={() => this.setCommentEdit(null)} >
-          close
-        </Button>
       </Form>
       </div>)
   }
 
   genCommentEditForm = () => {
-    // let commentData=this.state.ideaData.comments.find((c) => c.id===this.state.commentEdit)
+    let commentData=this.state.ideaData.comments.find((c) => c.id===this.state.commentEdit)
     return (<div>
       <Form  >
-        <Form.Group controlId="name">
-          <Form.Label><p> </p>Edit Comment<p>Comment Text:</p></Form.Label>
-          <Form.Control placeholder="Enter Comment" name="comment" onChange={this.handleChange} />
+        <Form.Group controlId="textInput">
+          <Form.Label><p> </p>Edit Comment<p>Comment Text: {commentData.text}</p></Form.Label>
+          <Form.Control placeholder="New Comment Text" name="comment" onChange={this.handleChange} />
         </Form.Group>
-        <Button variant="primary" onClick={() => this.setCommentEdit()}>
+        <Button variant="primary" onClick={() => this.patchComment()}>
           Submit
         </Button>
         <Button variant="primary" onClick={() => this.setCommentEdit(null)} >
@@ -183,6 +192,22 @@ class IdeaShow extends React.Component {
       </div>)
   }
 
+  genIdeaEditForm = () => {
+    return (<div>
+      <Form  >
+        <Form.Group controlId="textInput">
+          <Form.Label><p> </p>Edit Idea<p>Idea Description: {this.state.ideaData.description}</p></Form.Label>
+          <Form.Control placeholder="New Idea Description" name="comment" onChange={this.handleChange} />
+        </Form.Group>
+        <Button variant="primary" onClick={() => this.patchIdea()}>
+          Submit
+        </Button>
+        <Button variant="primary" onClick={() => this.setIdeaEdit(null)} >
+          close
+        </Button>
+      </Form>
+      </div>)
+  }
 
   genMainForm = () => {
     if (!this.props.user){
@@ -191,24 +216,29 @@ class IdeaShow extends React.Component {
     if (this.state.commentEdit){
       return this.genCommentEditForm()
     }
+    if (this.state.ideaEdit){
+      return this.genIdeaEditForm()
+    }
     return this.genNewCommentForm()
   }
 
   render(){
 
-  // console.log(this.state)
-  if(!this.state.ideaData){
-    return null
-  }
-  console.log(this.state)
-  const Idea = this.state.ideaData
-  return (
+    // console.log(this.state)
+    if(!this.state.ideaData){return null}
+    const Idea = this.state.ideaData
+    return (
     <div>
       <Card>
       <Card.Body>
-        <Card.Title><h1>{this.state.ideaData.title}</h1></Card.Title>
-          <p>Catagory: <Link to={"/category/"+Idea.category_id}>{Idea.category_title}</Link></p>
+        <Card.Title><h1>{this.state.ideaData.title}</h1>
+        {this.props.user && this.state.ideaData.user_id === this.props.user.id ? <Button variant="primary" onClick={() => this.setIdeaEdit(this.state.ideaData.id)} >
+          Edit
+        </Button> : null}
+        </Card.Title>
+          <p>Catagory: <Link to={"/categories/"+Idea.category_id}>{Idea.category_title}</Link></p>
           <p>Idea Description: {this.state.ideaData.description}</p>
+          <p>Posted by: {this.state.ideaData.author_name}</p>
       </Card.Body>
       {this.genComments()}
       {this.genMainForm()}

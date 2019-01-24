@@ -1,126 +1,46 @@
 import React, { Component } from 'react';
-import Button from 'react-bootstrap/lib/Button'
-import Form from 'react-bootstrap/lib/Form'
-import FormControl from 'react-bootstrap/lib/FormControl'
-
-// import '../globalUse.js'
-
-
-const BackendUrl = "http://localhost:3000/"
-
-function patchBackendData(route, data, confirmFn){
-    return fetch(BackendUrl+route,{
-        method: "PATCH",
-        headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-        },
-        body: data
-    }).then(res => res.json()).then(json => confirmFn(json));
-}
-
-
-function deleteBackendData(route, confirmFn){
-    return fetch(BackendUrl+route,{
-        method: "DELETE",
-        headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-        }
-    }).then(res => res.json()).then(json => confirmFn(json));
-}
+import Card from 'react-bootstrap/lib/Card'
+import {Link} from 'react-router-dom'
+import Table from 'react-bootstrap/lib/Table'
 
 class UserPage extends Component {
 
-  state = {
-    toEditQ:null,
-    toEditA:null
-  }
-
-
-  openEditQ = (event) => {
-    console.log(this.state)
-    this.setState({toEditQ: event.target.parentElement.id*1})
-  }
-  closeEditQ = () => {
-    console.log(this.state)
-    this.setState({toEditQ: null})
-  }
-
-
-  openEditA = (event) => {
-    this.setState({toEditA: event.target.parentElement.id*1})
-  }
-  closeEditA = () => {
-    this.setState({toEditA: null})
-  }
-
-
-  updateQ = (event, id) => {
-    console.log("update")
-     patchBackendData(`/ideas/${id}`,
-       JSON.stringify({"idea": {text: (event.target.parentElement.children[0].value)}}),
-      this.props.reload)
-  }
-
-  deleteQ = (event) => {
-    console.log("delete")
-    deleteBackendData(`/ideas/${event.target.parentElement.id}`,this.props.reload)
-  }
-
-  updateA = (event) => {
-    console.log("update")
-     patchBackendData(`/comments/${event.target.parentElement.id}`,
-       JSON.stringify({"comment": {text: (event.target.parentElement.children[0].value)}}),
-      this.props.reload)
-  }
-
-  deleteA = (event) => {
-    console.log("delete")
-    deleteBackendData(`/comments/${event.target.parentElement.id}`,this.props.reload)
-  }
 
 
 
+    genUserIdeas = () => {
+      // console.log(this.state)
+      // console.log(this.state.data)
+      return this.props.user.ideas.map(idea =>
+        <tr key={idea.id} >
+          <td><Link to={"/ideas/"+idea.id}>{idea.title}</Link></td>
+          <td>{idea.description}</td>
+          <td><Link to={"/categories/"+idea.category_id}>{idea.category_title}</Link></td>
+          <td>{idea.comments.length}</td>
+        </tr>
+        )
+    }
 
-  genUserIdeas  = () => {
-    return this.props.user.ideas.map(idea =>
-      <div>
-      <h4>{idea.text}</h4>
-      {(this.state.toEditQ === idea.id)?
-        <Form inline id={idea.id} >
-        <FormControl type="text" defaultValue={idea.text} />
-        <Button onClick={(event)=> this.updateQ(event, idea.id)} >Update</Button>
-        <Button onClick={this.closeEditQ} >Close</Button>
-      </Form> :
-      <div id={idea.id} >
-       <Button onClick={this.openEditQ} >Edit</Button>
-       <Button onClick={this.deleteQ} >Delete</Button>
-       </div>}
-    </div>)
-  }
 
   genUserComments  = () => {
-    return this.props.user.comments.map(comment =>
-      <div>
-      <h4>{comment.text}</h4>
-      <p>For Idea {comment.idea_id}</p>
-      {(this.state.toEditA === comment.id)?
-      <Form inline id={comment.id} >
-        <FormControl type="text" defaultValue={comment.text} />
-        <Button onClick={this.updateA} >Update</Button>
-        <Button onClick={this.closeEditA} >Close</Button>
-      </Form> :
-      <div id={comment.id} >
-       <Button onClick={this.openEditA} >Edit</Button>
-       <Button onClick={this.deleteA} >Delete</Button>
-       </div>}
-    </div>)
+    // return null
+    return this.props.user.posted_comments.map(comment =>
+      <Card key={comment.id}>
+      <Card.Body>
+      <Card.Title><p className="float-left">
+      <Link to={"/users/"+comment.user_id}>{comment.author_name}</Link> said
+      </p></Card.Title>
+        <Card.Text>
+            {comment.text}
+        </Card.Text>
+      </Card.Body>
+      </Card>
+      )
   }
 
 
   componentDidMount() {
-    console.log("route test")
+    console.log(this.props)
   }
 
   render() {
@@ -131,7 +51,19 @@ class UserPage extends Component {
       <div>
 
         <h4>Your Ideas</h4>
+        <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>comments</th>
+          </tr>
+        </thead>
+        <tbody>
         {this.genUserIdeas()}
+        </tbody>
+        </Table>
         <h4>Your Comments</h4>
         {this.genUserComments()}
       </div>

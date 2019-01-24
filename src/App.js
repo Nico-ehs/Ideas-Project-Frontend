@@ -8,7 +8,7 @@ import UserPage from './pages/UserPage';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import NewIdea from './pages/NewIdea';
-
+// import Background from './light-310850_1280.png';
 
 import './App.css';
 
@@ -58,16 +58,28 @@ class App extends Component {
     }
   }
 
+  setUser2 = (data) => {
+    console.log("test reload")
+    console.log(this.state)
+    this.setState({user: data})
+    console.log(this.state)
+  }
+
 
   setCategories = (data) => {
     this.setState({categories: data})
   }
 
   reloadUser = () => {
-    fetch(BackendUrl+`user/${this.user.id}`)
+    fetch(BackendUrl+"/categories")
       .then(response => response.json())
       .then(this.setCategories)
+    fetch(BackendUrl+`users/${this.state.user.id}`)
+      .then(response => response.json())
+      .then(this.setUser2)
   }
+
+
 
 
 
@@ -113,12 +125,22 @@ class App extends Component {
         <CategoryShow id={match.params.id}  user={this.state.user} reload={this.reloadUser} />
       </div>
     )
+
+    const User = () => (
+      <div>
+        {this.state.user ? <UserPage user={this.state.user} reload={this.reloadUser} /> : null}
+      </div>
+    )
     // console.log(this.state)
     return (
-      <div className="App">
+
+      <div className="App" style={{
+        backgroundColor: "rgba(255,255,255,0.5)"
+      }}>
       <Router>
         <React.Fragment>
           <NavContainer user={this.state.user} logout={this.logout} categories={this.state.categories} />
+          <div className="Main" >
           <Route exact path="/" render={() => <Home user={this.state.user} />}/>
           <Route exact path="/home" render={() => <Home user={this.state.user} />} />
           <Route exact path="/newidea" render={() => <NewIdea user={this.state.user} categories={this.state.categories} />} />
@@ -130,9 +152,10 @@ class App extends Component {
                 <Redirect to="/home" /> :
                 <SignUp loginFn={this.loginFn} /> }
               />
-          <Route exact path="/userpage" render={() => <UserPage user={this.state.user} reload={this.reloadUser} />} />
-          <Route path="/ideas/:id" component={Idea} />
+          <Route exact path="/userpage" render={User} />
+          <Route path="/ideas/:id" render={Idea} />
           <Route path="/categories/:id" component={Category} />
+          </div>
         </React.Fragment>
       </Router>
       </div>

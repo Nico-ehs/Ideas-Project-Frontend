@@ -14,11 +14,12 @@ class NavContainer extends Component {
   }
 
   genCategoriesDropdown = () => {
-    if (!this.props.categories) {
+    if (!this.props.categories || !this.props.categories.map) {
       return null
     }
     // console.log(this.props.categories.length)
-     return this.props.categories.map(category =>
+    // debugger
+    return this.props.categories.map(category =>
        <div key={category.id} >
        <NavDropdown.Item href={"../categories/"+category.id} >{category.title}</NavDropdown.Item>
        </div>
