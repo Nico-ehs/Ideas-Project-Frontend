@@ -17,13 +17,25 @@ function postBackendData(route, data, confirmFn){
 class NewIdea extends React.Component {
 
   state = {
-    title: "",
-    description: "",
-    category: "things"
+    // title: "",
+    // description: "",
+    category: "Story Ideas",
+    message: null
   };
+
+  // checkValid = () => {
+  //   if (!this.state.title || !this.state.descritpion){
+  //     return null
+  //   }
+  //   return true
+  // }
 
   handleSubmit = (event) => {
     event.preventDefault()
+    if (!this.state.title || !this.state.descritpion){
+      this.setState({message: "Invalid Data"})
+      return null
+    }
     // console.log(this.state)
     // console.log(this.props.categories.find(c => c.title === this.state.category))
     // debugger
@@ -61,6 +73,7 @@ class NewIdea extends React.Component {
   render(){
   	return (
       <div className="NewIdea">
+      <p>{this.state.message}</p>
         <Form onSubmit={this.handleSubmit} >
           <Form.Group controlId="title">
             <Form.Label>Title</Form.Label>
