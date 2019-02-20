@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, Button } from "react-bootstrap/lib";
+import { Redirect } from 'react-router-dom'
 
 const BackendUrl = "http://localhost:3000/"
 
@@ -30,26 +31,39 @@ class NewIdea extends React.Component {
   //   return true
   // }
 
+  setRedirect = () => {
+    this.setState({
+      redirect: true
+    })
+  }
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to='/' />
+    }
+  }
+
   handleSubmit = (event) => {
     event.preventDefault()
-    if (!this.state.title || !this.state.descritpion){
+    if (!this.state.title || !this.state.description){
       this.setState({message: "Invalid Data"})
+      debugger
+      console.log(this.state)
       return null
     }
     // console.log(this.state)
     // console.log(this.props.categories.find(c => c.title === this.state.category))
     // debugger
-    console.log({"idea": { "title": this.state.title,
-    "description": this.state.description,
-    "category_id": this.props.categories.find(c => {return c.title === this.state.category}).id*1,
-    "user_id":this.props.user.id*1 } })
+    // console.log({"idea": { "title": this.state.title,
+    // "description": this.state.description,
+    // "category_id": this.props.categories.find(c => {return c.title === this.state.category}).id*1,
+    // "user_id":this.props.user.id*1 } })
     postBackendData("ideas", JSON.stringify(
       {"idea": { "title": this.state.title,
       "description": this.state.description,
       "category_id": this.props.categories.find(c => {return c.title === this.state.category}).id*1,
       "user_id":this.props.user.id*1 } }
     )
-      , console.log)
+      , this.setRedirect)
     }
 
 
@@ -58,7 +72,7 @@ class NewIdea extends React.Component {
     change[e.target.id] = e.target.value
     this.setState(change)
     // this.setState({ name: e.target.value });
-    console.log(this.state)
+    // console.log(this.state)
   };
 
   categorySelect = () =>{
@@ -73,6 +87,7 @@ class NewIdea extends React.Component {
   render(){
   	return (
       <div className="NewIdea">
+      {this.renderRedirect()}
       <p>{this.state.message}</p>
         <Form onSubmit={this.handleSubmit} >
           <Form.Group controlId="title">

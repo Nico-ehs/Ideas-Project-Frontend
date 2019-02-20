@@ -80,7 +80,7 @@ class App extends Component {
   }
 
 
-
+  
 
 
   loginFn = (login) => {
@@ -141,6 +141,7 @@ class App extends Component {
         <React.Fragment>
           <NavContainer user={this.state.user} logout={this.logout} categories={this.state.categories} />
           <div className="Main" >
+
           <Route exact path="/" render={() => <Home user={this.state.user} />}/>
           <Route exact path="/home" render={() => <Home user={this.state.user} />} />
           <Route exact path="/newidea" render={() => <NewIdea user={this.state.user} categories={this.state.categories} />} />
