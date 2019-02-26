@@ -8,6 +8,9 @@ import UserPage from './pages/UserPage';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import NewIdea from './pages/NewIdea';
+
+
+
 // import Background from './light-310850_1280.png';
 
 import './App.css';
@@ -80,7 +83,7 @@ class App extends Component {
   }
 
 
-  
+
 
 
   loginFn = (login) => {
