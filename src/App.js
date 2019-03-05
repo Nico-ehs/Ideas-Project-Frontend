@@ -16,7 +16,7 @@ import NewIdea from './pages/NewIdea';
 import './App.css';
 
 
-const BackendUrl = "http://localhost:3000/"
+const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
 
 // function postBackendData(route, data, confirmFn){
 //     return fetch(BackendUrl+route,{

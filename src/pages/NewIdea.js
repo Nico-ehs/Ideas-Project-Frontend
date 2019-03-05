@@ -2,7 +2,7 @@ import React from "react";
 import { Form, Button } from "react-bootstrap/lib";
 import { Redirect } from 'react-router-dom'
 
-const BackendUrl = "http://localhost:3000/"
+const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
 
 function postBackendData(route, data, confirmFn){
     return fetch(BackendUrl+route,{

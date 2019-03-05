@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/lib/Table'
 import {Link} from 'react-router-dom'
-const BackendUrl = "http://localhost:3000/"
+const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
 
 
 class Home extends Component {

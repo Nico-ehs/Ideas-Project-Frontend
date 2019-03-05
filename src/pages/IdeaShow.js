@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/lib/Button'
 import Card from 'react-bootstrap/lib/Card'
 import {Link} from 'react-router-dom'
 
-const BackendUrl = "http://localhost:3000/"
+const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
 
 function postBackendData(route, data, confirmFn){
     return fetch(BackendUrl+route,{
