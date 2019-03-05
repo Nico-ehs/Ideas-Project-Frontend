@@ -3,7 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { Provider } from "react-redux";
+// import { Provider } from "react-redux";
+
+export const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
+// export const BackendUrl = "http://localhost:3000/"
+
+
 
 ReactDOM.render(
   <App />

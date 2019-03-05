@@ -8,7 +8,7 @@ import UserPage from './pages/UserPage';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import NewIdea from './pages/NewIdea';
-
+import {BackendUrl} from './index'
 
 
 // import Background from './light-310850_1280.png';
@@ -16,7 +16,7 @@ import NewIdea from './pages/NewIdea';
 import './App.css';
 
 
-const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
+// const BackendUrl = "https://ideas-project-backend.herokuapp.com/"
 
 // function postBackendData(route, data, confirmFn){
 //     return fetch(BackendUrl+route,{
